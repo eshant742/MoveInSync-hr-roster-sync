@@ -107,25 +107,25 @@ public class SecurityConfig {
     @Bean
     public UserDetailsService userDetailsService(
             PasswordEncoder passwordEncoder,
-            @org.springframework.beans.factory.annotation.Value("${roster.security.admin-password:admin123}") String adminPass,
-            @org.springframework.beans.factory.annotation.Value("${roster.security.operator-password:operator123}") String operatorPass,
-            @org.springframework.beans.factory.annotation.Value("${roster.security.employee-password:employee123}") String employeePass) {
+            @org.springframework.beans.factory.annotation.Value("${roster.auth.admin-key:admin_access_key}") String adminKey,
+            @org.springframework.beans.factory.annotation.Value("${roster.auth.operator-key:operator_access_key}") String operatorKey,
+            @org.springframework.beans.factory.annotation.Value("${roster.auth.employee-key:employee_access_key}") String employeeKey) {
 
         UserDetails admin = User.builder()
                 .username("admin")
-                .password(passwordEncoder.encode(adminPass))
+                .password(passwordEncoder.encode(adminKey))
                 .roles("ADMIN")
                 .build();
 
         UserDetails operator = User.builder()
                 .username("operator")
-                .password(passwordEncoder.encode(operatorPass))
+                .password(passwordEncoder.encode(operatorKey))
                 .roles("OPERATOR")
                 .build();
 
         UserDetails employee = User.builder()
                 .username("employee")
-                .password(passwordEncoder.encode(employeePass))
+                .password(passwordEncoder.encode(employeeKey))
                 .roles("EMPLOYEE")
                 .build();
 

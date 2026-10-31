@@ -52,7 +52,7 @@ class EmployeeEventControllerIntegrationTest {
                 .build();
 
         mockMvc.perform(post("/api/v1/employees/events")
-                        .with(httpBasic("admin", "admin123"))
+                        .with(httpBasic("admin", "admin_access_key"))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isOk())
@@ -79,7 +79,7 @@ class EmployeeEventControllerIntegrationTest {
                 .build();
 
         mockMvc.perform(post("/api/v1/employees/events")
-                        .with(httpBasic("employee", "employee123"))
+                        .with(httpBasic("employee", "employee_access_key"))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isForbidden());
@@ -112,7 +112,7 @@ class EmployeeEventControllerIntegrationTest {
                 .build();
 
         mockMvc.perform(post("/api/v1/employees/events")
-                        .with(httpBasic("admin", "admin123"))
+                        .with(httpBasic("admin", "admin_access_key"))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isOk())

@@ -13,7 +13,7 @@ services:
     environment:
       POSTGRES_DB: roster_sync
       POSTGRES_USER: ${DB_USER:-postgres}
-      POSTGRES_PASSWORD: ${DB_PASSWORD:-postgres}
+      POSTGRES_PASSWORD: ${DB_SECRET:-dev_db_secret}
     ports:
       - "5432:5432"
     volumes:
@@ -37,8 +37,8 @@ services:
     environment:
       DB_HOST: postgres
       DB_PORT: 5432
-      DB_USER: postgres
-      DB_PASSWORD: postgres
+      DB_USER: ${DB_USER:-postgres}
+      DB_PASSWORD: ${DB_SECRET:-dev_db_secret}
       SAFETY_BRAKE_THRESHOLD: "0.30"
       RECONCILIATION_BATCH_SIZE: "1000"
     depends_on:

@@ -100,21 +100,28 @@ mvn clean spring-boot:run
 
 The API enforces Role-Based Access Control (RBAC) via HTTP Basic Authentication:
 
-| Username | Default Evaluation Key | Role | HTTP Basic Header | Permitted Operations |
-|---|---|---|---|---|
-| `admin` | `admin123` | `ADMIN` | `Authorization: Basic YWRtaW46YWRtaW4xMjM=` | Ingest real-time events, update transport fields, upload nightly CSV, query employees |
-| `operator` | `operator123` | `OPERATOR` | `Authorization: Basic b3BlcmF0b3I6b3BlcmF0b3IxMjM=` | Approve safety-braked reconciliation runs, view actuator metrics, trigger outbox dispatch |
-| `employee` | `employee123` | `EMPLOYEE` | `Authorization: Basic ZW1wbG95ZWU6ZW1wbG95ZWUxMjM=` | Read-only profile lookups |
+| Username | Default Evaluation Key | Role | Permitted Operations |
+|---|---|---|---|
+| `admin` | `admin_access_key` | `ADMIN` | Ingest real-time events, update transport fields, upload nightly CSV, query employees |
+| `operator` | `operator_access_key` | `OPERATOR` | Approve safety-braked reconciliation runs, view actuator metrics, trigger outbox dispatch |
+| `employee` | `employee_access_key` | `EMPLOYEE` | Read-only profile lookups |
 
 ---
 
 ## 📡 REST API Documentation & Sample `curl` Commands
 
+Set auth keys in your terminal (or replace inline):
+```bash
+ADMIN_KEY="admin_access_key"
+OPERATOR_KEY="operator_access_key"
+EMPLOYEE_KEY="employee_access_key"
+```
+
 ### 1. Ingest Batch of Employee Events (Idempotent & Order-Tolerant)
 ```bash
-# Uses ADMIN credentials (admin:admin123)
+# Uses ADMIN credentials
 curl -X POST http://localhost:8080/api/v1/employees/events \
-  -H "Authorization: Basic YWRtaW46YWRtaW4xMjM=" \
+  -u "admin:${ADMIN_KEY}" \
   -H "Content-Type: application/json" \
   -d '{
     "events": [
@@ -148,9 +155,9 @@ curl -X POST http://localhost:8080/api/v1/employees/events \
 
 ### 2. Update Transport-Admin Owned Fields (Protected from HR Overwrites)
 ```bash
-# Uses ADMIN credentials (admin:admin123)
+# Uses ADMIN credentials
 curl -X PUT http://localhost:8080/api/v1/employees/transport-fields \
-  -H "Authorization: Basic YWRtaW46YWRtaW4xMjM=" \
+  -u "admin:${ADMIN_KEY}" \
   -H "Content-Type: application/json" \
   -d '{
     "employeeId": "EMP-101",
@@ -162,9 +169,9 @@ curl -X PUT http://localhost:8080/api/v1/employees/transport-fields \
 
 ### 3. Replay Event with Stale Version (Proves Out-of-Order Handling)
 ```bash
-# Office transfer to BLR-02 arrived at Version 7 (admin:admin123)
+# Office transfer to BLR-02 arrived at Version 7
 curl -X POST http://localhost:8080/api/v1/employees/events \
-  -H "Authorization: Basic YWRtaW46YWRtaW4xMjM=" \
+  -u "admin:${ADMIN_KEY}" \
   -H "Content-Type: application/json" \
   -d '{
     "events": [
@@ -180,7 +187,7 @@ curl -X POST http://localhost:8080/api/v1/employees/events \
 
 # Now delayed shift change arrives at Version 6 (Stale!)
 curl -X POST http://localhost:8080/api/v1/employees/events \
-  -H "Authorization: Basic YWRtaW46YWRtaW4xMjM=" \
+  -u "admin:${ADMIN_KEY}" \
   -H "Content-Type: application/json" \
   -d '{
     "events": [
@@ -198,17 +205,17 @@ curl -X POST http://localhost:8080/api/v1/employees/events \
 
 ### 4. Upload Nightly CSV Export for Reconciliation
 ```bash
-# Uses ADMIN credentials (admin:admin123)
+# Uses ADMIN credentials
 curl -X POST http://localhost:8080/api/v1/reconciliation/upload/TENANT-ACME \
-  -H "Authorization: Basic YWRtaW46YWRtaW4xMjM=" \
+  -u "admin:${ADMIN_KEY}" \
   -F "file=@sample_export.csv"
 ```
 
 ### 5. Operator Approves Safety-Braked Run
 ```bash
-# Uses OPERATOR credentials (operator:operator123)
+# Uses OPERATOR credentials
 curl -X POST http://localhost:8080/api/v1/reconciliation/approve \
-  -H "Authorization: Basic b3BlcmF0b3I6b3BlcmF0b3IxMjM=" \
+  -u "operator:${OPERATOR_KEY}" \
   -H "Content-Type: application/json" \
   -d '{
     "reconciliationRunId": 1,
@@ -219,16 +226,16 @@ curl -X POST http://localhost:8080/api/v1/reconciliation/approve \
 
 ### 6. Query Employee Profile (Caffeine Cached)
 ```bash
-# Uses EMPLOYEE credentials (employee:employee123)
+# Uses EMPLOYEE credentials
 curl -X GET http://localhost:8080/api/v1/employees/TENANT-ACME/EMP-101 \
-  -H "Authorization: Basic ZW1wbG95ZWU6ZW1wbG95ZWUxMjM="
+  -u "employee:${EMPLOYEE_KEY}"
 ```
 
 ### 7. Trigger Immediate Outbox Dispatch (Crash-Recovery Verification)
 ```bash
-# Uses OPERATOR credentials (operator:operator123)
+# Uses OPERATOR credentials
 curl -X POST http://localhost:8080/api/v1/operations/outbox/publish \
-  -H "Authorization: Basic b3BlcmF0b3I6b3BlcmF0b3IxMjM="
+  -u "operator:${OPERATOR_KEY}"
 ```
 
 ---
