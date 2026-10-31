@@ -132,12 +132,17 @@ class ReconciliationBenchmarkTest {
             }
         };
 
-        Enumeration<InputStream> enumeration = Collections.enumeration(new Iterable<InputStream>() {
+        Enumeration<InputStream> enumeration = new Enumeration<>() {
             @Override
-            public Iterator<InputStream> iterator() {
-                return iterator;
+            public boolean hasMoreElements() {
+                return iterator.hasNext();
             }
-        });
+
+            @Override
+            public InputStream nextElement() {
+                return iterator.next();
+            }
+        };
 
         return new SequenceInputStream(enumeration);
     }
