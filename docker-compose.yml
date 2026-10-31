@@ -2,8 +2,6 @@
 # HR Roster Sync — Docker Compose
 # ──────────────────────────────────────────────
 
-version: '3.9'
-
 services:
 
   # ── PostgreSQL ────────────────────────────────

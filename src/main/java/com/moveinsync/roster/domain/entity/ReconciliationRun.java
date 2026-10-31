@@ -65,6 +65,15 @@ public class ReconciliationRun {
     @Column(name = "safety_brake_triggered", nullable = false)
     private boolean safetyBrakeTriggered = false;
 
+    @Column(name = "operator_approved", nullable = false)
+    private boolean operatorApproved = false;
+
+    @Column(name = "operator_approved_by", length = 128)
+    private String operatorApprovedBy;
+
+    @Column(name = "error_details", columnDefinition = "TEXT")
+    private String errorDetails;
+
     /**
      * If the safety brake was triggered, this records who approved the override.
      */
@@ -207,6 +216,30 @@ public class ReconciliationRun {
 
     public void setSafetyBrakeTriggered(boolean safetyBrakeTriggered) {
         this.safetyBrakeTriggered = safetyBrakeTriggered;
+    }
+
+    public boolean isOperatorApproved() {
+        return operatorApproved;
+    }
+
+    public void setOperatorApproved(boolean operatorApproved) {
+        this.operatorApproved = operatorApproved;
+    }
+
+    public String getOperatorApprovedBy() {
+        return operatorApprovedBy;
+    }
+
+    public void setOperatorApprovedBy(String operatorApprovedBy) {
+        this.operatorApprovedBy = operatorApprovedBy;
+    }
+
+    public String getErrorDetails() {
+        return errorDetails;
+    }
+
+    public void setErrorDetails(String errorDetails) {
+        this.errorDetails = errorDetails;
     }
 
     public String getApprovedBy() {
