@@ -1,0 +1,62 @@
+# ──────────────────────────────────────────────
+# HR Roster Sync — Docker Compose
+# ──────────────────────────────────────────────
+
+version: '3.9'
+
+services:
+
+  # ── PostgreSQL ────────────────────────────────
+  postgres:
+    image: postgres:15-alpine
+    container_name: roster-sync-db
+    environment:
+      POSTGRES_DB: roster_sync
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d roster_sync"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - roster-net
+
+  # ── Spring Boot Application ──────────────────
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: roster-sync-app
+    ports:
+      - "8080:8080"
+    environment:
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USER: postgres
+      DB_PASSWORD: postgres
+      SAFETY_BRAKE_THRESHOLD: "0.30"
+      RECONCILIATION_BATCH_SIZE: "1000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    networks:
+      - roster-net
+
+volumes:
+  pgdata:
+    driver: local
+
+networks:
+  roster-net:
+    driver: bridge
