@@ -14,3 +14,4 @@ ALTER TABLE reconciliation_runs
     ADD COLUMN IF NOT EXISTS approved_by VARCHAR(128),
     ADD COLUMN IF NOT EXISTS approval_reason VARCHAR(512),
     ADD COLUMN IF NOT EXISTS message VARCHAR(1024);
+
