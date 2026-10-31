@@ -30,3 +30,7 @@ roster:
     threshold: 0.30
   reconciliation:
     batch-size: 100
+  auth:
+    admin-key: admin_access_key
+    operator-key: operator_access_key
+    employee-key: employee_access_key
