@@ -142,3 +142,4 @@ class ReconciliationBenchmarkTest {
         return new SequenceInputStream(enumeration);
     }
 }
+

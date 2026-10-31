@@ -153,3 +153,4 @@ class EventValidationServiceTest {
         assertTrue(errors.stream().anyMatch(e -> e.contains("officeCode")));
     }
 }
+

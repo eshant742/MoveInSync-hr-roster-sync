@@ -104,3 +104,4 @@ class TransactionalOutboxTest {
                 "No outbox events must be created when transaction does not commit employee state");
     }
 }
+

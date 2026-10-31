@@ -235,3 +235,4 @@ class EmployeeEventServiceTest {
         assertTrue(events.stream().anyMatch(e -> "SEAT_FREED".equals(e.getEventType())));
     }
 }
+

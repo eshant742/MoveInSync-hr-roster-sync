@@ -475,3 +475,4 @@ Custom Micrometer metrics exposed under Prometheus `/actuator/prometheus`:
 | `roster.outbox.pending` | Gauge | Live count of unpublished outbox events | &gt; 500 indicates message broker publisher lag |
 | `roster.reconciliation.duration` | Timer | Execution duration of nightly reconciliation runs | &gt; 45 seconds |
 | `roster.reconciliation.safety_brake_triggered` | Counter | Total safety brake interventions | &gt; 0 triggers immediate PagerDuty on-call alert |
+
