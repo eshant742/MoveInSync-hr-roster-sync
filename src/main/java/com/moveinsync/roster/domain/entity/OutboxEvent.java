@@ -20,7 +20,7 @@ import java.util.UUID;
 @Table(
         name = "outbox_events",
         indexes = {
-                @Index(name = "idx_outbox_processed", columnList = "processed"),
+                @Index(name = "idx_outbox_published", columnList = "published"),
                 @Index(name = "idx_outbox_created_at", columnList = "created_at"),
                 @Index(name = "idx_outbox_aggregate", columnList = "aggregate_type, aggregate_id")
         }
