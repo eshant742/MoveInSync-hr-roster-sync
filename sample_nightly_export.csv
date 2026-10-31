@@ -1,0 +1,11 @@
+employeeId,firstName,lastName,email,phone,managerId,officeCode,department,shiftCode
+EMP-101,Aarav,Sharma,aarav.sharma@acme.com,+919876543210,MGR-01,BLR-01,Engineering,GENERAL
+EMP-102,Priya,Nair,priya.nair@acme.com,+919876543211,MGR-01,BLR-01,Engineering,GENERAL
+EMP-103,Rohan,Verma,rohan.verma@acme.com,+919876543212,MGR-02,BLR-01,Product,GENERAL
+EMP-104,Ananya,Sen,ananya.sen@acme.com,+919876543213,MGR-02,BLR-02,Design,MORNING
+EMP-105,Vikram,Singh,vikram.singh@acme.com,+919876543214,MGR-03,BLR-02,Operations,NIGHT
+EMP-106,Sneha,Patel,sneha.patel@acme.com,+919876543215,MGR-03,BLR-01,Finance,GENERAL
+EMP-107,Karan,Johar,karan.johar@acme.com,+919876543216,MGR-04,BLR-01,Marketing,GENERAL
+EMP-108,Divya,Dutta,divya.dutta@acme.com,+919876543217,MGR-04,BLR-02,HR,MORNING
+EMP-109,Manish,Malhotra,manish.m@acme.com,+919876543218,MGR-05,BLR-01,Legal,GENERAL
+EMP-110,Tara,Sutaria,tara.sutaria@acme.com,+919876543219,MGR-05,BLR-02,Sales,NIGHT
