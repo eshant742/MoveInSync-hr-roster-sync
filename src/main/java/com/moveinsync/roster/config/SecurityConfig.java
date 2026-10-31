@@ -96,30 +96,36 @@ public class SecurityConfig {
 
     /**
      * Provides in-memory user details for the three RBAC roles.
-     *
-     * <p>In production, this would be replaced with a database-backed
-     * or LDAP-backed {@link UserDetailsService}.</p>
+     * Passwords can be overridden via environment variables or application properties.
      *
      * @param passwordEncoder the password encoder to hash passwords
+     * @param adminPass       admin user password (default: admin123)
+     * @param operatorPass    operator user password (default: operator123)
+     * @param employeePass    employee user password (default: employee123)
      * @return the configured {@link UserDetailsService}
      */
     @Bean
-    public UserDetailsService userDetailsService(PasswordEncoder passwordEncoder) {
+    public UserDetailsService userDetailsService(
+            PasswordEncoder passwordEncoder,
+            @org.springframework.beans.factory.annotation.Value("${roster.security.admin-password:admin123}") String adminPass,
+            @org.springframework.beans.factory.annotation.Value("${roster.security.operator-password:operator123}") String operatorPass,
+            @org.springframework.beans.factory.annotation.Value("${roster.security.employee-password:employee123}") String employeePass) {
+
         UserDetails admin = User.builder()
                 .username("admin")
-                .password(passwordEncoder.encode("admin123"))
+                .password(passwordEncoder.encode(adminPass))
                 .roles("ADMIN")
                 .build();
 
         UserDetails operator = User.builder()
                 .username("operator")
-                .password(passwordEncoder.encode("operator123"))
+                .password(passwordEncoder.encode(operatorPass))
                 .roles("OPERATOR")
                 .build();
 
         UserDetails employee = User.builder()
                 .username("employee")
-                .password(passwordEncoder.encode("employee123"))
+                .password(passwordEncoder.encode(employeePass))
                 .roles("EMPLOYEE")
                 .build();
 

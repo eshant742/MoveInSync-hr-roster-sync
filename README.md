@@ -100,11 +100,11 @@ mvn clean spring-boot:run
 
 The API enforces Role-Based Access Control (RBAC) via HTTP Basic Authentication:
 
-| Username | Password | Role | Permitted Operations |
-|---|---|---|---|
-| `admin` | `admin123` | `ADMIN` | Ingest real-time events, update transport fields, upload nightly CSV, query employees |
-| `operator` | `operator123` | `OPERATOR` | Approve safety-braked reconciliation runs, view actuator metrics, trigger outbox dispatch |
-| `employee` | `employee123` | `EMPLOYEE` | Read-only profile lookups |
+| Username | Default Evaluation Key | Role | HTTP Basic Header | Permitted Operations |
+|---|---|---|---|---|
+| `admin` | `admin123` | `ADMIN` | `Authorization: Basic YWRtaW46YWRtaW4xMjM=` | Ingest real-time events, update transport fields, upload nightly CSV, query employees |
+| `operator` | `operator123` | `OPERATOR` | `Authorization: Basic b3BlcmF0b3I6b3BlcmF0b3IxMjM=` | Approve safety-braked reconciliation runs, view actuator metrics, trigger outbox dispatch |
+| `employee` | `employee123` | `EMPLOYEE` | `Authorization: Basic ZW1wbG95ZWU6ZW1wbG95ZWUxMjM=` | Read-only profile lookups |
 
 ---
 
@@ -112,8 +112,9 @@ The API enforces Role-Based Access Control (RBAC) via HTTP Basic Authentication:
 
 ### 1. Ingest Batch of Employee Events (Idempotent & Order-Tolerant)
 ```bash
+# Uses ADMIN credentials (admin:admin123)
 curl -X POST http://localhost:8080/api/v1/employees/events \
-  -u admin:admin123 \
+  -H "Authorization: Basic YWRtaW46YWRtaW4xMjM=" \
   -H "Content-Type: application/json" \
   -d '{
     "events": [
@@ -147,8 +148,9 @@ curl -X POST http://localhost:8080/api/v1/employees/events \
 
 ### 2. Update Transport-Admin Owned Fields (Protected from HR Overwrites)
 ```bash
+# Uses ADMIN credentials (admin:admin123)
 curl -X PUT http://localhost:8080/api/v1/employees/transport-fields \
-  -u admin:admin123 \
+  -H "Authorization: Basic YWRtaW46YWRtaW4xMjM=" \
   -H "Content-Type: application/json" \
   -d '{
     "employeeId": "EMP-101",
@@ -160,9 +162,9 @@ curl -X PUT http://localhost:8080/api/v1/employees/transport-fields \
 
 ### 3. Replay Event with Stale Version (Proves Out-of-Order Handling)
 ```bash
-# Office transfer to BLR-02 arrived at Version 7
+# Office transfer to BLR-02 arrived at Version 7 (admin:admin123)
 curl -X POST http://localhost:8080/api/v1/employees/events \
-  -u admin:admin123 \
+  -H "Authorization: Basic YWRtaW46YWRtaW4xMjM=" \
   -H "Content-Type: application/json" \
   -d '{
     "events": [
@@ -178,7 +180,7 @@ curl -X POST http://localhost:8080/api/v1/employees/events \
 
 # Now delayed shift change arrives at Version 6 (Stale!)
 curl -X POST http://localhost:8080/api/v1/employees/events \
-  -u admin:admin123 \
+  -H "Authorization: Basic YWRtaW46YWRtaW4xMjM=" \
   -H "Content-Type: application/json" \
   -d '{
     "events": [
@@ -196,15 +198,17 @@ curl -X POST http://localhost:8080/api/v1/employees/events \
 
 ### 4. Upload Nightly CSV Export for Reconciliation
 ```bash
+# Uses ADMIN credentials (admin:admin123)
 curl -X POST http://localhost:8080/api/v1/reconciliation/upload/TENANT-ACME \
-  -u admin:admin123 \
+  -H "Authorization: Basic YWRtaW46YWRtaW4xMjM=" \
   -F "file=@sample_export.csv"
 ```
 
 ### 5. Operator Approves Safety-Braked Run
 ```bash
+# Uses OPERATOR credentials (operator:operator123)
 curl -X POST http://localhost:8080/api/v1/reconciliation/approve \
-  -u operator:operator123 \
+  -H "Authorization: Basic b3BlcmF0b3I6b3BlcmF0b3IxMjM=" \
   -H "Content-Type: application/json" \
   -d '{
     "reconciliationRunId": 1,
@@ -215,14 +219,16 @@ curl -X POST http://localhost:8080/api/v1/reconciliation/approve \
 
 ### 6. Query Employee Profile (Caffeine Cached)
 ```bash
+# Uses EMPLOYEE credentials (employee:employee123)
 curl -X GET http://localhost:8080/api/v1/employees/TENANT-ACME/EMP-101 \
-  -u employee:employee123
+  -H "Authorization: Basic ZW1wbG95ZWU6ZW1wbG95ZWUxMjM="
 ```
 
 ### 7. Trigger Immediate Outbox Dispatch (Crash-Recovery Verification)
 ```bash
+# Uses OPERATOR credentials (operator:operator123)
 curl -X POST http://localhost:8080/api/v1/operations/outbox/publish \
-  -u operator:operator123
+  -H "Authorization: Basic b3BlcmF0b3I6b3BlcmF0b3IxMjM="
 ```
 
 ---
