@@ -33,3 +33,4 @@ public class OpenApiConfig {
                                 .description("HTTP Basic Auth (admin:admin_access_key or operator:operator_access_key)")));
     }
 }
+
